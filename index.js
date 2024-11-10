@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const { Command } = require('commander');
 const program = new Command();
 
@@ -11,9 +13,16 @@ program.parse(process.argv);
 const options = program.opts();
 
 const app = express();
+app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello');
+
+app.get('/notes/:name', (req, res) => {
+  const notePath = path.join(options.cache, `${req.params.name}.txt`);
+  if (!fs.existsSync(notePath)) {
+    return res.status(404).send('Not found');
+  }
+  const noteText = fs.readFileSync(notePath, 'utf-8');
+  res.send(noteText);
 });
 
 app.listen(options.port, options.host, () => {
