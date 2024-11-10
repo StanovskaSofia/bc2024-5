@@ -66,6 +66,11 @@ app.post('/write', mmmm.none(), (req, res) => {
   res.sendStatus(201);
 });
 
+app.get('/UploadForm.html', (req, res) => {
+  const formPath = path.join(__dirname, 'UploadForm.html');
+  res.sendFile(formPath);
+});
+
 app.listen(options.port, options.host, () => {
   console.log(`Server running at http://${options.host}:${options.port}/`);
 });
