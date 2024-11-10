@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const { Command } = require('commander');
 const program = new Command();
-
+const multer = require ('multer');
+const mmmm = multer()
 program
   .requiredOption('-h, --host <host>', 'server host')
   .requiredOption('-p, --port <port>', 'server port')
@@ -51,6 +52,18 @@ app.get('/notes', (req, res) => {
     return { name, text };
   });
   res.status(200).json(notes);
+});
+
+app.post('/write', mmmm.none(), (req, res) => {
+  const noteName = req.body.note_name;
+  const noteText = req.body.note;
+  const notePath = path.join(options.cache, `${noteName}.txt`);
+
+  if (fs.existsSync(notePath)) {
+    return res.status(400).send('Bad request');
+  }
+  fs.writeFileSync(notePath, noteText);
+  res.sendStatus(201);
 });
 
 app.listen(options.port, options.host, () => {
